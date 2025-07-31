@@ -1,0 +1,20 @@
+<script>
+  window.OrderLimitConfig = {
+    minPrice: {{ shop.metafields.settings.min_order | json }},
+    maxPrice: {{ shop.metafields.settings.max_order | json }},
+    minQty: {{ shop.metafields.settings.min_quantity | json }},
+    maxQty: {{ shop.metafields.settings.max_quantity | json }}
+  };
+</script>
+
+<script src="{{ 'order_limit.js' | asset_url  }}" defer></script>
+{% comment %} <script>{{ 'max_order_limit.js' | asset_url | 'script_tag' }} </script> {% endcomment %}
+
+{% schema %}
+{
+  "name": "Order Checker",
+  "target": "body",
+  "settings": [],
+  "templates": ["cart"]
+}
+{% endschema %}
