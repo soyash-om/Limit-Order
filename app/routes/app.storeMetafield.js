@@ -4,7 +4,7 @@ import { json } from "@remix-run/node";
 export const action = async ({ request }) => {
   try {
     console.log("==enter");
-    const { admin, session } = await authenticate.admin(request);
+    const { admin } = await authenticate.admin(request);
     const { minOrderLimit, maxOrderLimit, minQuantityLimit, maxQuantityLimit } =
       await request.json();
 

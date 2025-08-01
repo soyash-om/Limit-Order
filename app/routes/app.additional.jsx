@@ -27,24 +27,6 @@ export default function AdditionalPage() {
         body: JSON.stringify({
           minOrderLimit,
           maxOrderLimit,
-        }),
-      });
-      const data = await sendRequestToBackend.json();
-
-      // console.log("Checking request", data);
-    } catch (error) {
-      console.log("Error while limiting the order", error);
-    }
-  };
-  const apiCallOnQuantitySetLimit = async () => {
-    console.log("called");
-    try {
-      const sendRequestToBackend = await fetch("/app/storeMetafield", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
           minQuantityLimit,
           maxQuantityLimit,
         }),
@@ -56,52 +38,72 @@ export default function AdditionalPage() {
       console.log("Error while limiting the order", error);
     }
   };
+  // const apiCallOnQuantitySetLimit = async () => {
+  //   console.log("called");
+  //   try {
+  //     const sendRequestToBackend = await fetch("/app/storeMetafield", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         minQuantityLimit,
+  //         maxQuantityLimit,
+  //       }),
+  //     });
+  //     const data = await sendRequestToBackend.json();
 
-   const resetPriceLimits = async () => {
-    console.log("Resetting Price Limits...");
-    setMaxOrderLimit("");
-    setMinOrderLimit("");
+  //     // console.log("Checking request", data);
+  //   } catch (error) {
+  //     console.log("Error while limiting the order", error);
+  //   }
+  // };
 
-    try {
-      const response = await fetch("/app/storeMetafield", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          minOrderLimit: "",
-          maxOrderLimit: "",
-        }),
-      });
-      const result = await response.json();
-      console.log("Price limits reset:", result);
-    } catch (error) {
-      console.error("Error resetting price limits:", error);
-    }
-  };
+  //  const resetPriceLimits = async () => {
+  //   console.log("Resetting Price Limits...");
+  //   setMaxOrderLimit("");
+  //   setMinOrderLimit("");
 
-  const resetQuantityLimits = async () => {
-    console.log("Resetting Quantity Limits...");
-    setMaxQuantityLimit("");
-    setMinQuantityLimit("");
+  //   try {
+  //     const response = await fetch("/app/storeMetafield", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         minOrderLimit: "",
+  //         maxOrderLimit: "",
+  //       }),
+  //     });
+  //     const result = await response.json();
+  //     console.log("Price limits reset:", result);
+  //   } catch (error) {
+  //     console.error("Error resetting price limits:", error);
+  //   }
+  // };
 
-    try {
-      const response = await fetch("/app/storeMetafield", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          minQuantityLimit: "",
-          maxQuantityLimit: "",
-        }),
-      });
-      const result = await response.json();
-      console.log("Quantity limits reset:", result);
-    } catch (error) {
-      console.error("Error resetting quantity limits:", error);
-    }
-  };
+  // const resetQuantityLimits = async () => {
+  //   console.log("Resetting Quantity Limits...");
+  //   setMaxQuantityLimit("");
+  //   setMinQuantityLimit("");
+
+  //   try {
+  //     const response = await fetch("/app/storeMetafield", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         minQuantityLimit: "",
+  //         maxQuantityLimit: "",
+  //       }),
+  //     });
+  //     const result = await response.json();
+  //     console.log("Quantity limits reset:", result);
+  //   } catch (error) {
+  //     console.error("Error resetting quantity limits:", error);
+  //   }
+  // };
   return (
     <Page>
       <TitleBar title="Cart Page Order Limits"></TitleBar>
@@ -143,13 +145,13 @@ export default function AdditionalPage() {
           >
             Save
           </Button>
-          <Button
+          {/* <Button
             variant="primary"
-            style={{ padding: "0px 10px 0px 10px" }}
+            style={{  margin : "0px 0px 0px 10px" }}
             onClick={resetPriceLimits}
           >
             Reset
-          </Button>
+          </Button> */}
         </Card>
 
         <Card>
@@ -179,17 +181,17 @@ export default function AdditionalPage() {
           <Button
             variant="primary"
             style={{ padding: "0px 10px 0px 10px" }}
-            onClick={apiCallOnQuantitySetLimit}
+            onClick={apiCallOnPriceSetLimit}
           >
             Save
           </Button>
-          <Button
+          {/* <Button
             variant="primary"
             style={{ padding: "0px 10px 0px 10px" }}
             onClick={resetQuantityLimits}
           >
             Reset
-          </Button>
+          </Button> */}
 
         </Card>
       </BlockStack>
