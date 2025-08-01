@@ -24,18 +24,10 @@ async function validateCartLimits() {
   const { minPrice, maxPrice, minQty, maxQty } = window.OrderLimitConfig || {};
   console.log("Config Values:", { minPrice, maxPrice, minQty, maxQty });
 
-  if (
-    typeof minPrice !== "string" || typeof maxPrice !== "string" ||
-    typeof minQty !== "string" || typeof maxQty !== "string"
-  ) {
-    console.warn(" Order limits not properly defined in window.OrderLimitConfig");
-    return;
-  }
-
-  const minP = parseFloat(minPrice);
-  const maxP = parseFloat(maxPrice);
-  const minQ = parseInt(minQty, 10);
-  const maxQ = parseInt(maxQty, 10);
+   const minP = minPrice ? parseFloat(minPrice) : null;
+  const maxP = maxPrice ? parseFloat(maxPrice) : null;
+  const minQ = minQty ? parseInt(minQty, 10) : null;
+  const maxQ = maxQty ? parseInt(maxQty, 10) : null;
   console.log("Parsed Limits:", { minP, maxP, minQ, maxQ });
 
   const res = await fetch("/cart.js", {
@@ -47,40 +39,48 @@ async function validateCartLimits() {
   const subtotal = cart.items_subtotal_price / 100;
   const quantity = cart.item_count;
 
-  console.log("  - Subtotal :", subtotal);
-  console.log("  - Quantity:", quantity);
+  console.log(" Subtotal :", subtotal);
+  console.log("Quantity:", quantity);
 
   const checkoutBtn = document.querySelector('button[type="submit"][name="checkout"]');
 
+
   if (!checkoutBtn) {
-    alert("Checkout button not found.");
+    console.log("Checkout button not found.");
     return;
   }
 
-  if (subtotal < minP) {
+  if (minP !== null && subtotal < minP) {
     console.log("Subtotal below min limit");
     blockCheckout(checkoutBtn, `Minimum ₹${minP} required`);
-    checkoutBtn.style.backgroundColor = "rgb(42 33 33)";
     alert(`Please add more items. Minimum order value is ₹${minP}`);
-  } else if (subtotal > maxP) {
-    console.log(" Subtotal above max limit");
+    return;
+  }
+
+  if (maxP !== null && subtotal > maxP) {
+    console.log("Subtotal above max limit");
     blockCheckout(checkoutBtn, `Max ₹${maxP} exceeded`);
-    checkoutBtn.style.backgroundColor = "rgb(42 33 33)";
     alert(`Please remove some items. Maximum order value is ₹${maxP}`);
-  } else if (quantity < minQ) {
-    console.log(" Quantity below min limit");
+    return;
+  }
+
+  if (minQ !== null && quantity < minQ) {
+    console.log("Quantity below min limit");
     blockCheckout(checkoutBtn, `Min ${minQ} qty required`);
-    checkoutBtn.style.backgroundColor = "rgb(42 33 33)";
     alert(`Please add more items. Minimum quantity is ${minQ}`);
-  } else if (quantity > maxQ) {
+    return;
+  }
+
+  if (maxQ !== null && quantity > maxQ) {
     console.log("Quantity above max limit");
     blockCheckout(checkoutBtn, `Max ${maxQ} qty exceeded`);
-    checkoutBtn.style.backgroundColor = "rgb(42 33 33)";
     alert(`Please reduce quantity. Maximum allowed is ${maxQ}`);
-  } else {
-    console.log("Cart is within limits. Enabling checkout.");
-    allowCheckout(checkoutBtn);
+    return;
   }
+
+  console.log("Cart is within limits. Enabling checkout.");
+  allowCheckout(checkoutBtn);
+
 }
 
 function blockCheckout(button, message) {
@@ -90,7 +90,7 @@ function blockCheckout(button, message) {
   button.style.cursor = "not-allowed";
   button.textContent = message;
 
-  button.addEventListener("click", preventCheckout, { once: true });
+  button.addEventListener("click", preventCheckout);
 
   lastValidState = false;
 }

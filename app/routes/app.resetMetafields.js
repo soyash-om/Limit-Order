@@ -36,8 +36,6 @@ export const action = async ({ request }) => {
             ownerId: shopId,
             namespace: "settings",
             key: "min_order",
-            type: "single_line_text_field",
-            value: minOrderLimit,
           });
     
         if (maxOrderLimit !== undefined)
@@ -45,8 +43,6 @@ export const action = async ({ request }) => {
             ownerId: shopId,
             namespace: "settings",
             key: "max_order",
-            type: "single_line_text_field",
-            value: maxOrderLimit,
           });
     
         if (minQuantityLimit !== undefined)
@@ -54,8 +50,6 @@ export const action = async ({ request }) => {
             ownerId: shopId,
             namespace: "settings",
             key: "min_quantity",
-            type: "single_line_text_field",
-            value: minQuantityLimit,
           });
     
         if (maxQuantityLimit !== undefined)
@@ -63,8 +57,6 @@ export const action = async ({ request }) => {
             ownerId: shopId,
             namespace: "settings",
             key: "max_quantity",
-            type: "single_line_text_field",
-            value: maxQuantityLimit,
           });
     
         if (metafields.length === 0) {
@@ -77,19 +69,16 @@ export const action = async ({ request }) => {
 
     const response = await admin.graphql(
       `#graphql
-  mutation MetafieldsSet($metafields: [MetafieldsSetInput!]!) {
-    metafieldsSet(metafields: $metafields) {
-      metafields {
+  mutation MetafieldsDelete($metafields: [MetafieldIdentifierInput!]!) {
+    metafieldsDelete(metafields: $metafields) {
+      deletedMetafields {
         key
         namespace
-        value
-        createdAt 
-        updatedAt
+        ownerId
       }
       userErrors {
         field
         message
-        code
       }
     }
   }`,
@@ -100,14 +89,15 @@ export const action = async ({ request }) => {
       },
     );
     const responseInJson = await response.json();
-    console.log(
-      "metafield mutation ==>",
-      responseInJson.data.metafieldsSet.metafields,
-    );
+    // console.log("==bi", responseInJson)
+    // console.log(
+    //   "metafield mutation reset ==>",
+    //   responseInJson.data.metafieldsSet.metafields,
+    // );
     return json({
       success: true,
       shopId,
-      metafields: responseInJson.data.metafieldsSet,
+      metafields: responseInJson.data.metafieldsDelete,
     });
   } catch (err) {
     console.log("Error in query", err);
