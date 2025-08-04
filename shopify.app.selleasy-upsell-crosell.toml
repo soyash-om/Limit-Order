@@ -1,0 +1,24 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "2b6476d4fc64c6fd631ec8be4a955b99"
+name = "selleasy-upsell-crosell"
+handle = "selleasy-upsell-crosell-2"
+application_url = "https://colin-bowl-prime-centuries.trycloudflare.com"
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = true
+include_config_on_deploy = true
+
+[webhooks]
+api_version = "2025-04"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_customers,read_draft_orders,read_products,read_themes,write_customers,write_draft_orders,write_markets,write_products,write_script_tags,write_themes"
+
+[auth]
+redirect_urls = ["https://colin-bowl-prime-centuries.trycloudflare.com/auth/callback", "https://colin-bowl-prime-centuries.trycloudflare.com/auth/shopify/callback", "https://colin-bowl-prime-centuries.trycloudflare.com/api/auth/callback"]
+
+[pos]
+embedded = false

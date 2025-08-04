@@ -53,28 +53,28 @@ async function validateCartLimits() {
   if (minP !== null && subtotal < minP) {
     console.log("Subtotal below min limit");
     blockCheckout(checkoutBtn, `Minimum ₹${minP} required`);
-    alert(`Please add more items. Minimum order value is ₹${minP}`);
+    console.log(`Please add more items. Minimum order value is ₹${minP}`);
     return;
   }
 
   if (maxP !== null && subtotal > maxP) {
     console.log("Subtotal above max limit");
     blockCheckout(checkoutBtn, `Max ₹${maxP} exceeded`);
-    alert(`Please remove some items. Maximum order value is ₹${maxP}`);
+    console.log(`Please remove some items. Maximum order value is ₹${maxP}`);
     return;
   }
 
   if (minQ !== null && quantity < minQ) {
     console.log("Quantity below min limit");
     blockCheckout(checkoutBtn, `Min ${minQ} qty required`);
-    alert(`Please add more items. Minimum quantity is ${minQ}`);
+    console.log(`Please add more items. Minimum quantity is ${minQ}`);
     return;
   }
 
   if (maxQ !== null && quantity > maxQ) {
     console.log("Quantity above max limit");
     blockCheckout(checkoutBtn, `Max ${maxQ} qty exceeded`);
-    alert(`Please reduce quantity. Maximum allowed is ${maxQ}`);
+    console.log(`Please reduce quantity. Maximum allowed is ${maxQ}`);
     return;
   }
 

@@ -1,0 +1,95 @@
+<!-- Modal HTML -->
+<div id="promo-modal" style="display:none; position:fixed; top:30%; left:50%; transform:translateX(-50%); background:white; padding:20px; box-shadow:0 0 10px rgba(0,0,0,0.3); z-index:1000; border-radius:10px; max-width:90%; text-align:center;">
+  <p id="promo-message">Loading offer details...</p>
+  <p id="timer" style="margin-top: 5px; font-weight:bold;"></p>
+  <button id="close-modal" style="margin-top:10px; background:#333; color:#fff; border:none; padding:8px 16px; border-radius:5px; cursor:pointer;">Close</button>
+</div>
+
+<!-- Injected Metafield Values -->
+<script>
+  const minPrice = {{ shop.metafields.settings.min_order.value | json }};
+  const maxPrice = {{ shop.metafields.settings.max_order.value | json }};
+  const minQty = {{ shop.metafields.settings.min_quantity | json }};
+  const  maxQty = {{ shop.metafields.settings.max_quantity | json }};
+
+  console.log("🚀 minPrice:", minPrice);
+  console.log("🚀 maxPrice:", maxPrice);
+</script>
+
+<!-- Main Script -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const checkoutButton = document.querySelector('#checkout');
+    const modal = document.getElementById('promo-modal');
+    const closeModal = document.getElementById('close-modal');
+    const promoMessage = document.getElementById('promo-message');
+    const timerElement = document.getElementById('timer');
+
+    let timer;
+
+    function showModal(message) {
+      promoMessage.innerHTML = message;
+      modal.style.display = 'block';
+
+      let secondsLeft = 120;
+      clearInterval(timer);
+      timer = setInterval(() => {
+        const minutes = Math.floor(secondsLeft / 60);
+        const seconds = secondsLeft % 60;
+        timerElement.innerText = `⏳ Offer valid for ${minutes}:${seconds.toString().padStart(2, '0')} minutes`;
+        secondsLeft--;
+        if (secondsLeft < 0) {
+          clearInterval(timer);
+          timerElement.innerText = "⛔ Offer expired!";
+        }
+      }, 1000);
+    }
+
+    closeModal?.addEventListener('click', function () {
+      modal.style.display = 'none';
+      clearInterval(timer);
+      console.log("❌ Modal closed by user");
+    });
+
+    checkoutButton?.addEventListener('click', function (e) {
+      e.preventDefault();
+      console.log("🧪 Checkout button clicked");
+
+      fetch('/cart.js')
+        .then(res => res.json())
+        .then(cart => {
+          const cartTotal = cart.total_price / 100;
+          console.log("🛒 Cart Total:", cartTotal);
+
+          if (cartTotal < minPrice) {
+            const difference = (minPrice - cartTotal).toFixed(2);
+            const maxLeft = (maxPrice - cartTotal).toFixed(2);
+            const message = `🛍️ Add ₹${difference} more to unlock your Free Gift!<br>🧾 Max allowed: ₹${maxPrice}. You can still shop for ₹${maxLeft}.`;
+            showModal(message);
+            console.log("🔔 Cart below min price, blocking checkout");
+
+          } else if (cartTotal > maxPrice) {
+            const extra = (cartTotal - maxPrice).toFixed(2);
+            const message = `⚠️ You've exceeded the limit by ₹${extra}.<br>❌ Max checkout allowed: ₹${maxPrice}. Please remove some items.`;
+            showModal(message);
+            console.log("🔔 Cart above max price, blocking checkout");
+
+          } else {
+            console.log("✅ Cart within valid range. Proceeding to checkout.");
+            document.querySelector('form[action="/checkout"]').submit();
+          }
+        })
+        .catch(err => {
+          console.error("❌ Error fetching cart data:", err);
+        });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Checkout Block",
+  "target": "section",
+  "settings": []
+}
+{% endschema %}
